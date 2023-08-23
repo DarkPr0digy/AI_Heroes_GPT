@@ -21,13 +21,13 @@ class Chatbot:
         self.messages.append({"role": "user", "content": user_input})
 
         conversation = openai.ChatCompletion.create(
-            model="gpt-3.5",
+            model="gpt-3.5-turbo",
             messages=self.messages,
             temperature=0.9)
 
         response = conversation.choices[0].message.content
 
-        self.messages.append({"role": self.name, "content": response})
+        self.messages.append({"role": "assistant", "content": response})
 
         return response
 
@@ -37,3 +37,10 @@ class Chatbot:
 
 if __name__ == "__main__":
     chatbot = Chatbot(name="CovidBot", introduction="I am a chatbot")
+
+    while True:
+        user_input = input("User: ")
+
+        response = chatbot.generate_response(user_input)
+        print(f"{chatbot.name}: {response}")
+
