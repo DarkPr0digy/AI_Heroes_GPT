@@ -17,6 +17,9 @@ class Chatbot:
 
         self.messages = []
 
+        self.load_personality(name)
+        self.introduce()
+
     def load_personality(self, personality_name: str):
         with open("personalities.json") as personality_file:
             personalities = json.load(personality_file)
