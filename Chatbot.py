@@ -35,7 +35,7 @@ class Chatbot:
         print(f"{self.name}: {self.introduction}")
 
     def generate_response(self, user_input: str):
-        if user_input == "EXIT":
+        if user_input.lower() == "exit":
             return "See you next time"
 
         self.messages.append({"role": "user", "content": user_input})
