@@ -17,6 +17,9 @@ class Chatbot:
         self.messages = []
 
     def generate_response(self, user_input: str):
+        if user_input == "EXIT":
+            return "See you next time"
+
         self.messages.append({"role": "user", "content": user_input})
 
         conversation = openai.ChatCompletion.create(
