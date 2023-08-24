@@ -4,7 +4,7 @@ from Chatbot import Chatbot
 
 class Henry(Chatbot):
     def __init__(self):
-        # Get Introductory Message
+        # Get Introductory Message and Characteristics
         with open("personalities.json") as intro_file:
             config = json.load(intro_file)
 
