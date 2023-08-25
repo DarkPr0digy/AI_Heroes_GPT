@@ -28,6 +28,8 @@ if __name__ == "__main__":
         user_input = input("User: ")
         selected_personality = conversation_manager.select_personality(int(user_input))
 
+
+
     while True:
         user_input = input("User: ")
 

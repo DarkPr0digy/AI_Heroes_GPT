@@ -1,5 +1,7 @@
 import json
 import openai
+import os
+from datetime import datetime
 
 
 class Chatbot:
@@ -17,10 +19,10 @@ class Chatbot:
 
         self.messages = []
 
-        self.load_personality(name)
-        self.introduce()
+        self._load_personality(name)
+        self._introduce()
 
-    def load_personality(self, personality_name: str):
+    def _load_personality(self, personality_name: str):
         with open("personalities.json") as personality_file:
             personalities = json.load(personality_file)
 
@@ -32,7 +34,7 @@ class Chatbot:
         else:
             raise ValueError(f"Personality {personality_name} not found")
 
-    def introduce(self):
+    def _introduce(self):
         self.messages.extend([{"role": "system", "content": self.characteristic},
                               {"role": "assistant", "content": self.introduction}])
         print(f"{self.name}: {self.introduction}")
