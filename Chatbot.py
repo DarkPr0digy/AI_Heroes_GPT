@@ -2,7 +2,7 @@ import json
 import openai
 import os
 from datetime import datetime
-import re
+
 
 
 class Chatbot:
@@ -45,7 +45,7 @@ class Chatbot:
 
     def generate_response(self, user_input: str):
         if user_input.lower() == "exit":
-            self._conversational_insights(self.name)
+            self._conversational_insights()
             return "See you next time"
 
         self.messages.append({"role": "user", "content": user_input})
@@ -64,8 +64,7 @@ class Chatbot:
 
         return response
 
-    def _conversational_insights(self, user_name: str):
-        # TODO: Implement conversational insights
+    def _conversational_insights(self):
         self.messages.append(
             {"role": "system", "content": "Generate a python formatted dictionary containing the topic of our "
                                           "conversation based on the users input, and if it cannot be determined return UNKNOWN, with its key being 'topic'. Additionally, the name of the user if it can "
@@ -90,4 +89,15 @@ class Chatbot:
             "Subject of conversation": response['topic'],
             "Name of user": response['user_name']}
 
-        print(conversation_meta_information)
+        conversation_data = {
+            "meta-data": conversation_meta_information,
+            "messages": self.messages[1:len(self.messages)-1]}
+
+        if not os.path.exists('./conversations'):
+            os.makedirs('conversations')
+
+        filename = f'conversations/conversation_{timestamp}.json'
+
+        with open(filename, 'w') as file:
+            json.dump(conversation_data, file, indent=4)
+

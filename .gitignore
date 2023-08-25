@@ -1,4 +1,6 @@
 .idea/*
+./conversations/*
+./conversations
 *.iml
 *.xml
 config.json
