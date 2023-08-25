@@ -15,6 +15,5 @@ if __name__ == "__main__":
         user_input = input("User: ")
 
         response = chatbot.generate_response(user_input)
-
         print(f"{chatbot.name}: {response}")
 

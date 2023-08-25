@@ -23,5 +23,16 @@ class ConversationManager:
 
 if __name__ == "__main__":
     conversation_manager = ConversationManager()
-    user_input = input("User: ")
-    selected_personality = conversation_manager.select_personality(int(user_input))
+    selected_personality = None
+    while not selected_personality:
+        user_input = input("User: ")
+        selected_personality = conversation_manager.select_personality(int(user_input))
+
+    while True:
+        user_input = input("User: ")
+
+        response = selected_personality.generate_response(user_input)
+        if response == "See you next time":
+            break
+
+        print(f"{selected_personality.name}: {response}")
