@@ -3,6 +3,8 @@ import openai
 from datetime import datetime
 import os
 
+MODEL_NAME = "gpt-3.5-turbo"
+MODEL_TEMPERATURE = 0.9
 
 class InsightManager:
     def __init__(self, api_key: str, chatbot_name: str, user_total_characters: int, chatbot_total_words: int, messages):
@@ -31,9 +33,9 @@ class InsightManager:
                                           "be determined, if not return UNKNOWN, with its key being 'user_name'. Send only the dictionary as a string."})
 
         conversation = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=MODEL_NAME,
             messages=self.messages,
-            temperature=0.9)
+            temperature=MODEL_TEMPERATURE)
 
         # Try get response and convert to dictionary
         response = conversation.choices[0].message.content

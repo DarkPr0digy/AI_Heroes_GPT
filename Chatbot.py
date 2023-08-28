@@ -2,6 +2,9 @@ import json
 import openai
 from InsightManager import InsightManager
 
+MODEL_NAME = "gpt-3.5-turbo"
+MODEL_TEMPERATURE = 0.9
+
 
 class Chatbot:
     def __init__(self, name: str, user_total_characters=None, chatbot_total_words=None, conversation=None):
@@ -73,9 +76,9 @@ class Chatbot:
         self.messages.append({"role": "user", "content": user_input})
 
         conversation = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=MODEL_NAME,
             messages=self.messages,
-            temperature=0.9)
+            temperature=MODEL_TEMPERATURE)
 
         response = conversation.choices[0].message.content
 
