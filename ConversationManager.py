@@ -17,7 +17,7 @@ class ConversationManager:
         # Determine Available Conversations
         self.available_conversations = os.listdir('conversations')
 
-    def select_personality(self):
+    def select_existing_personality(self):
         """Select a personality to chat with
         :return: Chatbot instance of the selected personality
         """
@@ -28,11 +28,11 @@ class ConversationManager:
         selected_personality = None
         while not selected_personality:
             user_input = input("User: ")
-            selected_personality = self._create_personality(user_input)
+            selected_personality = self._select_personality_instance(user_input)
 
         return selected_personality
 
-    def _create_personality(self, personality_index):
+    def _select_personality_instance(self, personality_index):
         """Used to create a personality instance to chat with based on the index
         :param personality_index: Index of the personality to chat with
         :return: Chatbot instance of the selected personality
@@ -46,7 +46,7 @@ class ConversationManager:
             print('Personalities must be entered as an int, please try again')
             return None
 
-    def select_conversation(self):
+    def select_past_conversation(self):
         """Select a conversation to chat with
         :return: Chatbot instance of the selected conversation
         """
@@ -68,14 +68,14 @@ class ConversationManager:
 
         while not recreated_chatbot:
             user_input = input("User: ")
-            recreated_chatbot = self._recreate_personality(user_input)
+            recreated_chatbot = self._select_conversation_instance(user_input)
 
         # Delete Former Conversation - New one will be created
         os.remove(os.path.join('conversations', conversation_files[int(user_input)]))
 
         return recreated_chatbot
 
-    def _recreate_personality(self, conversation_index):
+    def _select_conversation_instance(self, conversation_index):
         """Used to recreate a personality instance to chat with based on the index
         :param conversation_index: Index of the conversation to chat with
         :return: Chatbot instance of the selected conversation
@@ -114,10 +114,14 @@ if __name__ == "__main__":
         except ValueError:
             print("Please enter a number")
 
+    if decision == 0 and not conversation_manager.available_conversations:
+        print("No previous conversations found, please start a new conversation")
+        decision = 1
+
     if decision == 0:
-        selected_personality = conversation_manager.select_conversation()
+        selected_personality = conversation_manager.select_past_conversation()
     else:
-        selected_personality = conversation_manager.select_personality()
+        selected_personality = conversation_manager.select_existing_personality()
 
     while True:
         user_input = input("User: ")

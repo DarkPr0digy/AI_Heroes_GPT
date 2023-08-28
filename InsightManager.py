@@ -6,6 +6,7 @@ import os
 MODEL_NAME = "gpt-3.5-turbo"
 MODEL_TEMPERATURE = 0.9
 
+
 class InsightManager:
     def __init__(self, api_key: str, chatbot_name: str, user_total_characters: int, chatbot_total_words: int, messages):
         """ Create an insight manager to generate conversational insights
@@ -75,4 +76,3 @@ class InsightManager:
 
         with open(filename, 'w') as file:
             json.dump(conversation_data, file, indent=4)
-
