@@ -1,15 +1,16 @@
 import json
 import openai
-import os
-from datetime import datetime
+from InsightManager import InsightManager
 
 
 class Chatbot:
     def __init__(self, name: str, user_total_characters=None, chatbot_total_words=None, conversation=None):
         """ Create a chatbot with a given personality
         :param name: Name of the personality
+        :param user_total_characters: Total number of characters typed by the user
+        :param chatbot_total_words: Total number of words used by the chatbot
+        :param conversation: List of messages in the conversation
         """
-
         self.name = name
         self.introduction = None
         self.characteristic = None
@@ -66,7 +67,7 @@ class Chatbot:
         :return: Response from the chatbot"""
 
         if user_input.lower() == "exit":
-            self._generate_conversational_insights()
+            InsightManager(self.api_key, self.name, self.user_total_characters, self.chatbot_total_words, self.messages)
             return "See you next time"
 
         self.messages.append({"role": "user", "content": user_input})
@@ -85,48 +86,3 @@ class Chatbot:
         self.chatbot_total_words += len(response.split(" "))
 
         return response
-
-    def _generate_conversational_insights(self):
-        """ Generate conversational insights
-        """
-        self.messages.append(
-            {"role": "system", "content": "Generate a python formatted dictionary containing the topic of our "
-                                          "conversation based on the users input, and if it cannot be determined return UNKNOWN, with its key being 'topic'. Additionally, the name of the user if it can "
-                                          "be determined, if not return UNKNOWN, with its key being 'user_name'. Send only the dictionary as a string."})
-
-        conversation = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=self.messages,
-            temperature=0.9)
-
-        # Try get response and convert to dictionary
-        response = conversation.choices[0].message.content
-        # response = eval(response)
-
-        try:
-            response_dict = json.loads(response)
-            topic = response_dict.get('topic')
-            user_name = response_dict.get('user_name')
-        except:
-            topic = "UNKNOWN"
-            user_name = "UNKNOWN"
-
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        conversation_meta_information = {
-            "Name of chatbot": self.name,
-            "Number of characters typed by user": self.user_total_characters,
-            "Number of words used by chatbot": self.chatbot_total_words,
-            "Subject of conversation": topic,
-            "Name of user": user_name}
-
-        conversation_data = {
-            "meta-data": conversation_meta_information,
-            "messages": self.messages[1:len(self.messages) - 1]}
-
-        if not os.path.exists('./conversations'):
-            os.makedirs('conversations')
-
-        filename = f'conversations/conversation_{timestamp}.json'
-
-        with open(filename, 'w') as file:
-            json.dump(conversation_data, file, indent=4)

@@ -5,10 +5,8 @@ from Chatbot import Chatbot
 
 
 class ConversationManager:
-    """A class to manage conversations and personality selection"""
     def __init__(self):
-        """
-        Create a conversation manager instance
+        """ Create a conversation manager instance
         """
         # Determine Available Chatbots
         with open("personalities.json") as personality_file:
