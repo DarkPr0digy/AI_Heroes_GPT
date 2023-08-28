@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class Chatbot:
-    def __init__(self, name: str):
+    def __init__(self, name: str, user_total_characters=None, chatbot_total_words=None, conversation=None):
         """ Create a chatbot with a given personality
         :param name: Name of the personality
         """
@@ -14,8 +14,8 @@ class Chatbot:
         self.introduction = None
         self.characteristic = None
 
-        self.user_total_characters = 0
-        self.chatbot_total_words = 0
+        self.user_total_characters = 0 if user_total_characters is None else user_total_characters
+        self.chatbot_total_words = 0 if chatbot_total_words is None else chatbot_total_words
 
         # Load API Key from Config File
         with open("config.json") as config_file:
@@ -24,11 +24,18 @@ class Chatbot:
         self.api_key = config["api_keys"]["open_ai"]
         openai.api_key = self.api_key
 
-        self.messages = []
+        self.messages = [] if conversation is None else conversation
 
         # Load Personality and Introduce Chatbot
         self._load_personality(name)
-        self._introduce()
+
+        if not self.messages:
+            self._introduce()
+        else:
+            # Print Previous Conversation for user
+            for message in self.messages:
+                print(f"{self.name if message['role'] == 'assistant' else message['role']}: {message['content']}")
+            self.messages.insert(0, {"role": "system", "content": self.characteristic})
 
     def _load_personality(self, personality_name: str):
         """ Load the personality from the personalities.json file
@@ -59,7 +66,7 @@ class Chatbot:
         :return: Response from the chatbot"""
 
         if user_input.lower() == "exit":
-            self._conversational_insights()
+            self._generate_conversational_insights()
             return "See you next time"
 
         self.messages.append({"role": "user", "content": user_input})
@@ -79,8 +86,8 @@ class Chatbot:
 
         return response
 
-    def _conversational_insights(self):
-        """ Generate conversational insights and save them to a file
+    def _generate_conversational_insights(self):
+        """ Generate conversational insights
         """
         self.messages.append(
             {"role": "system", "content": "Generate a python formatted dictionary containing the topic of our "
@@ -98,13 +105,11 @@ class Chatbot:
 
         try:
             response_dict = json.loads(response)
-            print(response_dict)
             topic = response_dict.get('topic')
             user_name = response_dict.get('user_name')
         except:
             topic = "UNKNOWN"
             user_name = "UNKNOWN"
-
 
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         conversation_meta_information = {
@@ -116,7 +121,7 @@ class Chatbot:
 
         conversation_data = {
             "meta-data": conversation_meta_information,
-            "messages": self.messages[1:len(self.messages)-1]}
+            "messages": self.messages[1:len(self.messages) - 1]}
 
         if not os.path.exists('./conversations'):
             os.makedirs('conversations')
@@ -125,4 +130,3 @@ class Chatbot:
 
         with open(filename, 'w') as file:
             json.dump(conversation_data, file, indent=4)
-
